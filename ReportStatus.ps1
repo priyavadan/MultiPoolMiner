@@ -6,6 +6,7 @@ param(
     [Parameter(Mandatory=$true)]$ActiveMiners,
     [Parameter(Mandatory=$true)]$Miners,
     [Parameter(Mandatory=$true)]$MinerStatusURL
+    [Parameter(Mandatory=$true)]$MPHApiKey
 )
 
 Write-Host "Pinging monitoring server..."
@@ -32,3 +33,25 @@ $minerreport = ConvertTo-Json @($ActiveMiners | Where-Object {$_.Activated -GT 0
 })
 Invoke-RestMethod -Uri $MinerStatusURL -Method Post -Body @{address = $Key; workername = $WorkerName; miners = $minerreport; profit = $profit}
 Write-Host "Your miner status key is: $Key"
+
+$retries = 3
+$retrycount = 0
+$completed = $false
+
+while (-not $completed) {
+    try{
+        Invoke-RestMethod -Uri "https://miningpoolhubstats.com/api/worker/$MPHApiKey" -TimeoutSec 10 
+-Method Post -Body @{workername = $WorkerName; miners = $minerreport; profit = $profit}
+        $completed = $true
+    } catch {
+        if ($retrycount -ge $retries) {
+            Write-Warning "Unable to post to monitoring URL..."
+        } else {
+            Write-Warning "Post to monitoring URL failed. Retrying in 5 seconds."
+            Start-Sleep 5
+            $retrycount++
+        }
+    }
+}
+
+
