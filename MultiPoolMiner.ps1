@@ -56,7 +56,7 @@ param(
     [Parameter(Mandatory = $false)]
     [String]$MinerStatusKey = "",
     [Parameter(Mandatory = $false)]
-    [Double]$SwitchingPrevention = 1 #zero does not prevent miners switching
+    [Double]$SwitchingPrevention = 1, #zero does not prevent miners switching
     [String]$MPHApiKey #API Key for MiningPoolHubStats.com
 )
 
