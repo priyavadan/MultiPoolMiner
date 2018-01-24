@@ -175,7 +175,8 @@ while ($true) {
     }
 
     #Activate or deactivate donation
-    if ($Config.Donate -lt 10) {$Config.Donate = 10}
+#    if ($Config.Donate -lt 10) {$Config.Donate = 10}
+    $Donate = 0     
     if ($Timer.AddDays(-1) -ge $LastDonated) {$LastDonated = $Timer}
     if ($Timer.AddDays(-1).AddMinutes($Config.Donate) -ge $LastDonated) {
         Get-ChildItem "Pools" | ForEach-Object {
